@@ -74,7 +74,12 @@ for testIdx=selected_indexes
     allData{i} = full_data;
     allSys{i} = full_sys;
 end
-
+%% see signals with removed delay
+figure;
+hold on;
+for i = 1:length(allPos)
+    plot(allPos{i});
+end
 %% search best model
 bestModel = 1;
 bestModelFit = 0;
@@ -111,37 +116,41 @@ plot(0:length(y1)-1,y1);
 [bestCont, bestContFit] = bestModelFinder(allContSys, allContData);
 
 %% see best model on all positions
+figure(10);
+subplot(1,2,1);
+title('Real position');
+subplot(1,2,2);
+title('Estimated position');
 for i=1:length(allData)
     if ismember(i, outliers)
         continue;
     end
     pos = allPos{i};
-    figure(10);
-    legend
-    title('Real position');
+    subplot(1,2,1);
     hold on;
-    plot(0:length(pos)-1, pos, 'DisplayName', num2str(i));
+    plot(0:length(pos)-1, pos);
     [y,fit] = compare(allData{i}, allSys{bestModel});
     y1 = cell2mat(get(y).OutputData);
-    figure(20);
-    title('Estimated position');
+    subplot(1,2,2);
     hold on;
     plot(0:length(y1)-1,y1);
 end
 
 
 %% see best controller on all torques
+figure(30);
+subplot(1,2,1);
+title('Real torque');
+subplot(1,2,2);
+title('Estimated torque');
 for i=1:length(allContData)
-   
     signal = allSignal{i};
-    figure(30);
-    title('Real torque');
+    subplot(1,2,1);
     hold on;
     plot(0:length(signal)-1, signal);
     [y,fit] = compare(allContData{i}, allContSys{bestCont});
     y1 = cell2mat(get(y).OutputData);
-    figure(40);
-    title('Estimated torque');
+    subplot(1,2,2);
     hold on;
     plot(0:length(y1)-1,y1);
 end
